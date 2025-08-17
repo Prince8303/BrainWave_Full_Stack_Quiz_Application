@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Result</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #333;
+      margin: 0;
+    }
+
+    .result-container {
+      background: #fff;
+      padding: 30px 25px;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 360px;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #222;
+    }
+
+    /* Circular progress wrapper */
+    .progress-wrapper {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      margin: 0 auto 15px auto;
+    }
+
+    .progress-ring {
+      transform: rotate(-90deg);
+    }
+
+    .progress-ring circle {
+      fill: transparent;
+      stroke-width: 12;
+      stroke-linecap: round;
+    }
+
+    .progress-ring .background {
+      stroke: #e6e6e6;
+    }
+
+    .progress-ring .progress {
+      stroke: url(#gradient);
+      stroke-dasharray: 440;
+      stroke-dashoffset: 440;
+      transition: stroke-dashoffset 1s ease-out;
+    }
+
+    /* Score text inside circle */
+    .score-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 20px;
+      font-weight: bold;
+      color: #28a745;
+    }
+
+    #feedback {
+      font-size: 16px;
+      color: #555;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+    }
+
+    #feedback:hover {
+      transform: scale(1.05);
+      color: #222;
+    }
+
+    .button {
+      margin-top: 25px;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      color: white;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0px 6px 15px rgba(255, 65, 108, 0.4);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="result-container">
+    <h1>Your Quiz Result</h1>
+
+    <!-- Circular progress -->
+    <div class="progress-wrapper">
+      <svg class="progress-ring" width="150" height="150">
+        <defs>
+          <linearGradient id="gradient" x1="1" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#6a11cb"/>
+            <stop offset="100%" stop-color="#2575fc"/>
+          </linearGradient>
+        </defs>
+        <circle class="background" cx="75" cy="75" r="70"/>
+        <circle class="progress" cx="75" cy="75" r="70"/>
+      </svg>
+      <div class="score-text" id="scoreText">0%</div>
+    </div>
+
+    <p id="score"></p>
+    <p id="feedback"></p>
+    <button class="button" onclick="window.location.href='index.html'">Go Back</button>
+  </div>
+
+  <script>
+    function displayResult() {
+      const score = localStorage.getItem('quizScore');
+      const totalQuestions = localStorage.getItem('totalQuestions');
+      const feedback = document.getElementById('feedback');
+      const scoreText = document.getElementById('scoreText');
+      const scorePara = document.getElementById('score');
+      const progressCircle = document.querySelector('.progress-ring .progress');
+      const radius = 70;
+      const circumference = 2 * Math.PI * radius;
+
+      progressCircle.style.strokeDasharray = circumference;
+
+      if (score !== null) {
+        scorePara.innerText = `You scored ${score} out of ${totalQuestions}`;
+
+        const percentage = (score / totalQuestions) * 100;
+        scoreText.innerText = `${Math.round(percentage)}%`;
+
+        const offset = circumference - (percentage / 100) * circumference;
+        progressCircle.style.strokeDashoffset = offset;
+
+        if (percentage >= 80) {
+          feedback.innerText = '🌟 Excellent work! Keep it up!';
+        } else if (percentage >= 50) {
+          feedback.innerText = '👍 Good job! You can do even better!';
+        } else {
+          feedback.innerText = '💪 Don’t give up! Try again!';
+        }
+      } else {
+        scorePara.innerText = 'No score available.';
+      }
+    }
+
+    window.onload = displayResult;
+  </script>
+</body>
+</html>
