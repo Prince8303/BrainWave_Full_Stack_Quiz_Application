@@ -16,7 +16,7 @@ public class QuizQuestion {
     private String correctAnswer;
 
     @ElementCollection
-    @CollectionTable(name="question_options", joinColumns = @JoinColumns(name = "question_id"))
+    @CollectionTable(name="question_options", joinColumns = @JoinColumn(name = "question_id"))
     @Column(name="option_text")
     private List<String> options;
 
